@@ -7,19 +7,18 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
-use Ramsey\Uuid\Type\Integer;
 
 class AuthController extends Controller
 {
 
-    private function responseJSON(int $status, array $messages, array $data = [])
+    private function responseJSON(int $status, string $messages, array $data = [])
     {
+        http_response_code($status);
         return response()->json([
             'status' => $status,
-            'messages' => $messages,
+            'message' => $messages,
             'data' => $data
-        ]);
+        ], $status);
     }
     public function login(Request $request)
     {
@@ -28,8 +27,10 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+        $valdrayy = $vald->messages()->toArray();
+
         if ($vald->fails()) {
-            return $this->responseJSON(422, $vald->messages()->toArray());
+            return $this->responseJSON(422, reset($valdrayy)[0]);
         }
 
         if (Auth::attempt($request->only('username', 'password'))) {
@@ -37,13 +38,13 @@ class AuthController extends Controller
             $token = $user->createToken('token-name')->plainTextToken;
             return $this->responseJSON(
                 200,
-                ["message" => "success"],
+                "success",
                 ["token" => $token]
             );
         } else {
             return $this->responseJSON(
                 422,
-                ["message" => "Incorrect username or password!!"]
+                "Incorrect username or password!!"
             );
         }
     }
@@ -57,20 +58,22 @@ class AuthController extends Controller
             'password' => 'required|confirmed'
         ]);
 
+        $valdrayy = $vald->messages()->toArray();
+
         if ($vald->fails()) {
-            return $this->responseJSON(422, $vald->messages()->toArray());
+            return $this->responseJSON(422, $valdrayy[array_key_first($valdrayy)][0]);
         }
 
         $reqall = $request->all();
         $reqall["password"] = Hash::make($reqall["password"]);
         $res = User::create($reqall);
 
-        return $this->responseJSON(200, ["message" => "success"], $res->toArray());
+        return $this->responseJSON(200, "success", $res->toArray());
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        return $this->responseJSON(200, ["message" => "Logged out"]);
+        return $this->responseJSON(200, "Logged out");
     }
 }

@@ -33,7 +33,7 @@ Route::middleware("auth:sanctum")->group(function () {
 Route::get('/unauthorized', function () {
     return response()->json([
         'status' => 401,
-        'messages' => ["message" => "Unauthorized"],
+        'message' => "Unauthorized",
         'data' => []
-    ]);
+    ], 401);
 })->name("unauthorized");

@@ -9,13 +9,14 @@ use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
-    private function responseJSON(int $status, array $messages, array $data = [])
+    private function responseJSON(int $status, string $messages, array $data = [])
     {
+        http_response_code($status);
         return response()->json([
             'status' => $status,
-            'messages' => $messages,
+            'message' => $messages,
             'data' => $data
-        ]);
+        ], $status);
     }
 
     public function search(Request $request)
@@ -26,9 +27,9 @@ class BarangController extends Controller
                 ->orWhere("kode_barang", "like", $q)
                 ->orWhere("expired_date", "like", $q)
                 ->get();
-            return $this->responseJSON(200, ["message" => "success"], $res->toArray());
+            return $this->responseJSON(200, "success", $res->toArray());
         } catch (Exception $ee) {
-            return $this->responseJSON(500, ["error" => $ee]);
+            return $this->responseJSON(500, $ee);
         }
     }
 }

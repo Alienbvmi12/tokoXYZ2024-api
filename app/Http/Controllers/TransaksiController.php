@@ -10,15 +10,16 @@ use Illuminate\Support\Facades\Validator as FacadesValidator;
 class TransaksiController extends Controller
 {
 
-    private function responseJSON(int $status, array $messages, array $data = [])
+    private function responseJSON(int $status, string $messages, array $data = [])
     {
+        http_response_code($status);
         return response()->json([
             'status' => $status,
-            'messages' => $messages,
+            'message' => $messages,
             'data' => $data
-        ]);
+        ], $status);
     }
-    
+
     public function storeTransaksi(Request $request)
     {
 
@@ -31,8 +32,10 @@ class TransaksiController extends Controller
             'items' => 'required'
         ]);
 
+        $valdrayy = $vald->messages()->toArray();
+
         if ($vald->fails()) {
-            return $this->responseJSON(422, $vald->messages()->toArray());
+            return $this->responseJSON(422, $valdrayy[array_key_first($valdrayy)][0]);
         } else {
             $item = $cum["items"];
             foreach ($item as $value) {
@@ -43,8 +46,10 @@ class TransaksiController extends Controller
                     "qty" => "required"
                 ]);
 
+                $valdrayy = $vald->messages()->toArray();
+
                 if ($vald->fails()) {
-                    return $this->responseJSON(422, $vald->messages()->toArray());
+                    return $this->responseJSON(422, $valdrayy[array_key_first($valdrayy)][0]);
                 }
 
                 $val["id_user"] = $user["id"];
@@ -55,6 +60,6 @@ class TransaksiController extends Controller
         }
 
         $trans = Transaksi::where("no_transaksi", $no_transaksi)->get();
-        return $this->responseJSON(200, ["message" => "success"], $trans->toArray());
+        return $this->responseJSON(200, "success", $trans->toArray());
     }
 }
