@@ -16,6 +16,7 @@ class BarangFactory extends Factory
      */
     public function definition(): array
     {
+        $rate = fake()->randomNumber(3, true) / 100;
         return [
             'kode_barang' => fake()->numerify('BRG-####'),
             'nama_barang' => fake()->word(),
@@ -24,7 +25,8 @@ class BarangFactory extends Factory
             'harga' => fake()->randomNumber(5, false) * 100,
             'image' => fake()->randomElement(
                 ['storage/image.png', 'storage/image2.jpg', 'storage/image3.jpg', 'storage/image4.jpg']
-            )
+            ),
+            'rating' => $rate > 5 ? $rate - 5 : $rate
         ];
     }
 }

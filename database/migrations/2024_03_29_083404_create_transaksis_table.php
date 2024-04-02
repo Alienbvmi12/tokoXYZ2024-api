@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('id_barang');
             $table->bigInteger('harga');
             $table->integer('qty');
-            $table->string('image');
+            $table->timestamps();
         });
     }
 

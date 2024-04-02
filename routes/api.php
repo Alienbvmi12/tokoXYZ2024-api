@@ -18,7 +18,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/profile', function (Request $request) {
-    return $request->user();
+    return response()->json([
+        'status' => 200,
+        'message' => "Success",
+        'data' => $request->user()
+    ], 200);
 });
 
 Route::post('/login', [AuthController::class, "login"])->name("login");

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer("jumlah");
             $table->bigInteger("harga");
             $table->string('image');
+            $table->float('rating', 9, 1);
             $table->timestamps();
         });
     }
