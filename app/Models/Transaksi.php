@@ -17,4 +17,8 @@ class Transaksi extends Model
         'harga',
         'qty'
     ];
+
+    public function barang(){
+        return $this->hasOne(Barang::class, 'id', 'id_barang');
+    }
 }

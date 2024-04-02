@@ -59,7 +59,10 @@ class TransaksiController extends Controller
             }
         }
 
-        $trans = Transaksi::where("no_transaksi", $no_transaksi)->get();
-        return $this->responseJSON(200, "success", $trans->toArray());
+        $trans = Transaksi::with("barang")->where("no_transaksi", $no_transaksi)->get()->toArray();
+        foreach($trans as $key => $value){
+            $trans[$key]["barang"] = $trans[$key]["barang"]["nama_barang"];
+        }
+        return $this->responseJSON(200, "success", $trans);
     }
 }
